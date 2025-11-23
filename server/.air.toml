@@ -1,0 +1,29 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # Just plain "go build" -o output_file
+  cmd = "go build -o ./tmp/main.exe ./cmd/api"
+  # The binary to run
+  bin = "./tmp/main.exe"
+  # Delay in ms after file change before build
+  delay = 1000
+  # Ignore these directories
+  exclude_dir = ["assets", "tmp", "vendor"]
+  # Watch these extensions
+  include_ext = ["go", "tpl", "tmpl", "html"]
+  # Ignore test files
+  exclude_regex = ["_test.go"]
+
+[log]
+  time = true
+
+[color]
+  main = "magenta"
+  watcher = "cyan"
+  build = "yellow"
+  runner = "green"
+
+[misc]
+  # Delete tmp directory on exit
+  clean_on_exit = true

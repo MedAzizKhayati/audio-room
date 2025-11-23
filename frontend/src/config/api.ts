@@ -8,7 +8,7 @@ const getApiConfig = () => {
   }
 
   // Check if we're in production (Railway deployment)
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://audio-room-production.up.railway.app/';
 
   if (backendUrl) {
     // Railway production environment

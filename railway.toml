@@ -1,0 +1,11 @@
+# Railway Configuration
+# This file tells Railway how to detect and build services
+
+[services.backend]
+source = "server"
+builder = "dockerfile"
+dockerfilePath = "server/Dockerfile"
+
+[services.frontend]
+source = "frontend"
+builder = "nixpacks"

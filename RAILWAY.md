@@ -10,57 +10,106 @@ This guide will help you deploy the Audio Room application to Railway.
 
 ## 🚀 Deploy to Railway
 
-### Method 1: Using Railway CLI (Recommended)
+### Using Railway CLI (Step-by-Step)
 
-1. **Install Railway CLI**
-   ```bash
-   npm i -g @railway/cli
-   ```
+Railway CLI requires deploying from each service directory separately. Here's how:
 
-2. **Login to Railway**
-   ```bash
-   railway login
-   ```
+#### 1. Install and Login
+```bash
+npm i -g @railway/cli
+railway login
+```
 
-3. **Initialize Project**
-   ```bash
-   railway init
-   ```
+#### 2. Deploy Backend Service
 
-4. **Deploy Backend**
-   ```bash
-   cd server
-   railway up
-   ```
+```bash
+# Navigate to server directory
+cd server
 
-5. **Deploy Frontend**
-   ```bash
-   cd ../frontend
-   railway up
-   ```
+# Initialize Railway project (creates new project)
+railway init
 
-### Method 2: Using Railway Dashboard
+# This will:
+# - Create a new Railway project
+# - Link this directory to it
+# - Deploy automatically using the Dockerfile
+
+# Generate a domain for the backend
+railway domain
+
+# Note the URL - you'll need it for the frontend
+```
+
+#### 3. Deploy Frontend Service
+
+```bash
+# Navigate to frontend directory (from root)
+cd ../frontend
+
+# Link to the SAME project (important!)
+railway link
+# When prompted:
+# - Select the project you created in step 2
+# - Choose "Create new service"
+# - Name it "frontend"
+
+# Set the backend URL environment variable
+# Replace with your actual backend URL from step 2
+railway variables --set NEXT_PUBLIC_BACKEND_URL=https://your-backend-production-xxxx.up.railway.app
+
+# Deploy the frontend
+railway up
+
+# Generate a domain for the frontend
+railway domain
+
+# Your app is live!
+```
+
+#### 4. Verify Deployment
+
+```bash
+# Check backend logs
+cd ../server
+railway logs
+
+# Check frontend logs
+cd ../frontend
+railway logs
+```
+
+### Alternative: Using Railway Dashboard (Easier for Monorepos)
 
 1. **Go to [Railway Dashboard](https://railway.app/dashboard)**
 
-2. **Create a New Project**
-   - Click "New Project"
+2. **Click "New Project"**
    - Select "Deploy from GitHub repo"
-   - Choose your repository
+   - Choose your `audio-room` repository
+   - Railway will auto-detect both `server` and `frontend` directories
 
-3. **Deploy Backend Service**
-   - Click "Add Service" → "GitHub Repo"
-   - Select your repo
-   - Set Root Directory: `server`
-   - Railway will auto-detect the Dockerfile
+3. **Deploy Backend (server directory)**
+   - Railway shows detected services
+   - Click on `server` directory
    - Click "Deploy"
+   - Railway automatically uses the Dockerfile
 
-4. **Deploy Frontend Service**
-   - Click "Add Service" → "GitHub Repo"
-   - Select your repo again
-   - Set Root Directory: `frontend`
-   - Railway will auto-detect Next.js
+4. **Deploy Frontend (frontend directory)**
+   - In the same project, click "+ New Service"
+   - Select "GitHub Repo" (same repository)
+   - Click on `frontend` directory
    - Click "Deploy"
+   - Railway auto-detects Next.js
+
+5. **Configure Environment Variables**
+   - Click on backend service
+   - Go to Settings → Generate Domain
+   - Copy the URL
+   - Click on frontend service
+   - Go to Variables tab
+   - Add: `NEXT_PUBLIC_BACKEND_URL` = `https://your-backend-url`
+   - Save (frontend auto-redeploys)
+   - Generate domain for frontend
+   - Visit your frontend URL! 🚀
 
 ## ⚙️ Environment Variables
 

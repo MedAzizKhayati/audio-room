@@ -207,6 +207,19 @@ Uses `dvh` (dynamic viewport height) units for proper mobile layout, especially 
 
 ## 🚢 Deployment
 
+### Railway (Recommended)
+
+See [RAILWAY.md](./RAILWAY.md) for detailed Railway deployment instructions.
+
+**Quick Deploy:**
+1. Push to GitHub
+2. Connect repo to Railway
+3. Deploy backend and frontend as separate services
+4. Set `NEXT_PUBLIC_BACKEND_URL` environment variable in frontend
+5. Done! 🎉
+
+### Docker Compose
+
 ### Environment Variables (Optional)
 ```bash
 # Backend

@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
@@ -35,6 +36,21 @@ type RouteParams struct {
 func registerHooks(lc fx.Lifecycle, params RouteParams) {
 	r := gin.Default()
 
+	// CORS middleware for Railway deployment
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
+
 	// Register global middlewares
 	for _, m := range params.Middlewares {
 		r.Use(m.Handle())
@@ -45,13 +61,19 @@ func registerHooks(lc fx.Lifecycle, params RouteParams) {
 		h.RegisterRoutes(r)
 	}
 
+	// Get port from environment variable (Railway sets this)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	// Define what happens on Start and Stop
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			fmt.Println("Server starting on :8080...")
+			fmt.Printf("Server starting on :%s...\n", port)
 			// Run in a goroutine so it doesn't block Fx
 			go func() {
-				if err := r.Run(":8080"); err != nil && err != http.ErrServerClosed {
+				if err := r.Run(":" + port); err != nil && err != http.ErrServerClosed {
 					fmt.Printf("Error starting server: %v\n", err)
 				}
 			}()

@@ -8,10 +8,9 @@ const getApiConfig = () => {
   }
 
   // Check if we're in production (Railway deployment)
-  const isProduction = process.env.NODE_ENV === 'production';
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-  if (isProduction && backendUrl) {
+  if (backendUrl) {
     // Railway production environment
     const wsProtocol = backendUrl.startsWith('https') ? 'wss:' : 'ws:';
     const httpProtocol = backendUrl.startsWith('https') ? 'https:' : 'http:';
